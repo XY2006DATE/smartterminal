@@ -2,12 +2,15 @@
 setopt PROMPT_SUBST
 setopt NO_NOTIFY    # 禁用后台任务通知
 
-SMARTTERM_SOURCE="${(%):-%x}"
-if [ -z "$SMARTTERM_SOURCE" ]; then
-  SMARTTERM_SOURCE="$0"
+# 通过 whence 找到脚本真实路径（跨设备兼容）
+_smartterm_init_script="${(%):-%x}"
+if [ -z "$_smartterm_init_script" ] || [ ! -f "$_smartterm_init_script" ]; then
+  _smartterm_init_script="$(whence -s "${(%):-%N}" 2>/dev/null || echo "")"
 fi
-
-SMARTTERM_DIR="$(cd "$(dirname "$SMARTTERM_SOURCE")/.." && pwd)"
+if [ -z "$_smartterm_init_script" ] || [ ! -f "$_smartterm_init_script" ]; then
+  _smartterm_init_script="$0"
+fi
+SMARTTERM_DIR="$(cd "$(dirname "$_smartterm_init_script")/.." && pwd)"
 
 smartterm_get_model() {
   local config="${SMARTTERM_DIR}/.smartterm/config.json"
