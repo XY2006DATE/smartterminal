@@ -11,24 +11,30 @@ if [ -z "$_smartterm_init_script" ] || [ ! -f "$_smartterm_init_script" ]; then
   _smartterm_init_script="$0"
 fi
 SMARTTERM_DIR="$(cd "$(dirname "$_smartterm_init_script")/.." && pwd)"
+echo "[DEBUG] SMARTTERM_DIR=$SMARTTERM_DIR" >&2
 
 smartterm_get_model() {
   local config="${SMARTTERM_DIR}/.smartterm/config.json"
+  echo "[DEBUG] smartterm_get_model: checking $config" >&2
   if [ -f "$config" ]; then
     grep '"defaultModel"' "$config" 2>/dev/null | sed 's/.*: *"\([^"]*\)".*/\1/'
+  else
+    echo "[DEBUG] config not found at $config" >&2
   fi
 }
 
 # 保存原始 PS1（避免重复）
 if [ -z "$_SMARTTERM_ORIG_PS1" ]; then
   _SMARTTERM_ORIG_PS1="$PS1"
+  echo "[DEBUG] saved original PS1: $_SMARTTERM_ORIG_PS1" >&2
 fi
 
 # 每次显示提示符前更新 PS1
 smartterm_update_prompt() {
   local model=$(smartterm_get_model)
+  echo "[DEBUG] smartterm_update_prompt: model=$model" >&2
   if [ -n "$model" ]; then
-    PS1="%F{cyan}${model}%f $_SMARTTERM_ORIG_PS1"
+    PS1="%F{cyan}(${model})%f $_SMARTTERM_ORIG_PS1"
   else
     PS1="$_SMARTTERM_ORIG_PS1"
   fi
