@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Local config (contains API keys)
+.smartterm/config.json
+.smartterm/history.json
+.smartterm/commands.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
